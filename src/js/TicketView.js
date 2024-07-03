@@ -29,14 +29,12 @@ export default class TicketView {
       const year = new Date(dateInMs).getFullYear();
       const hours = new Date(dateInMs).getHours();
       const seconds = new Date(dateInMs).getSeconds();
-
-     
   
       ticket.created = `${date}.${month}.${year} ${hours}:${seconds}`
     }
 
     ticketElement.setAttribute('id', `${ticket.id}`)
-    
+
     ticketElement.innerHTML = `
       <div class="ticket-satatus">${ticket.status}</div>
       <span class="ticket-name">${ticket.name}</span>
