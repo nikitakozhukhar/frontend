@@ -9,27 +9,28 @@ export default class HelpDesk {
     if (!(container instanceof HTMLElement)) {
       throw new Error("This is not HTML element!");
     }
-    
+
     this.container = container;
     this.ticketService = new TicketService();
     this.ticketView = new TicketView(this.container);
 
-    
+
     // this.formContainer = document.createElement('div');
     // this.ticketForm = new TicketForm()
-    
+
     this.createAddButton();
     this.initForm();
     this.deleteTicket();
   }
 
   init() {
+    
     console.log("Инициализация и рендеринг тикетов");
     this.ticketService.list(response => {
       this.ticketView.renderTickets(response);
       this.deleteTicket();
     })
-    
+
   }
 
   createAddButton() {
@@ -38,21 +39,21 @@ export default class HelpDesk {
     button.className = 'add-ticket-button';
 
     button.addEventListener('click', () => this.showForm());
-    
+
     this.container.insertAdjacentElement('beforebegin', button);
-   
+
     return button;
   }
 
   initForm() {
     const ticketForm = new TicketForm((data) => {
       this.ticketService.create(data, (response) => {
-        
+
         this.ticketView.renderTickets([response])
-        this.init(); 
+        this.init();
         this.hideForm();
       });
-      
+
     });
 
     this.formContainer = document.createElement('div');
@@ -70,22 +71,26 @@ export default class HelpDesk {
 
   deleteTicket() {
     const ticketList = document.querySelector('.ticket-list');
-    
-      if (ticketList) {
-        const deleteButtons = ticketList.querySelectorAll('.ticket-delete');
-        deleteButtons.forEach(deleteButton => {
-          deleteButton.addEventListener('click', (e) => {
-            const id = e.target.closest('.ticket').id
-            
-            this.ticketService.delete(id, (e) => {
-              e.target.closest('.ticket').remove();
-              this.init(); 
-            })
+
+    if (ticketList) {
+      const deleteButtons = ticketList.querySelectorAll('.ticket-delete');
+
+      deleteButtons.forEach(deleteButton => {
+        deleteButton.addEventListener('click', (e) => {
+          // debugger;
+          const ticket = e.target.closest('.ticket');
+          const id = ticket.id
+         
+          this.ticketService.delete(id, (response) => {
+            console.log(response)
+            ticket.remove();
+            this.init();
           })
         })
-      } 
+      })
+    }
   }
-      
+
   showForm() {
     this.formContainer.style.display = 'block';
   }
@@ -96,5 +101,5 @@ export default class HelpDesk {
 
 
 
-  
+
 }
