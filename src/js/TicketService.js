@@ -45,6 +45,7 @@ export default class TicketService {
       method: 'GET',
       url: `http://localhost:7070/?method=deleteById&id=${id}`,
       callback,
+      noResponse: true,
     })
   }
 }

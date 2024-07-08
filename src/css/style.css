@@ -48,6 +48,10 @@
   display: none;
 }
 
+.show-description {
+  display: block;
+}
+
 .form {
   position: absolute;
   top: 10%;

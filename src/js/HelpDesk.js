@@ -13,14 +13,12 @@ export default class HelpDesk {
     this.container = container;
     this.ticketService = new TicketService();
     this.ticketView = new TicketView(this.container);
-
-
-    // this.formContainer = document.createElement('div');
-    // this.ticketForm = new TicketForm()
+    
+    this.deleteTicket = this.deleteTicket.bind(this);
+    this.getDescription = this.getDescription.bind(this);
 
     this.createAddButton();
     this.initForm();
-    this.deleteTicket();
   }
 
   init() {
@@ -28,9 +26,13 @@ export default class HelpDesk {
     console.log("Инициализация и рендеринг тикетов");
     this.ticketService.list(response => {
       this.ticketView.renderTickets(response);
-      this.deleteTicket();
     })
+    this.addEventListeners();
+  }
 
+  addEventListeners() {
+    this.container.addEventListener('click', this.deleteTicket);
+    this.container.addEventListener('click', this.getDescription);
   }
 
   createAddButton() {
@@ -69,27 +71,36 @@ export default class HelpDesk {
     })
   }
 
-  deleteTicket() {
-    const ticketList = document.querySelector('.ticket-list');
+  deleteTicket(event) {
+   
+    const ticket = event.target.closest('.ticket');
+    const id = ticket.id;
+    const deleteButton = event.target.closest('.ticket-delete');
 
-    if (ticketList) {
-      const deleteButtons = ticketList.querySelectorAll('.ticket-delete');
+    if (deleteButton) {
+      this.ticketService.delete(id, () => {
+        ticket.remove();
+        this.init();
+        location.reload()
+      })
+    } 
+  }
 
-      deleteButtons.forEach(deleteButton => {
-        deleteButton.addEventListener('click', (e) => {
-          // debugger;
-          const ticket = e.target.closest('.ticket');
-          const id = ticket.id
-         
-          this.ticketService.delete(id, (response) => {
-            console.log(response)
-            ticket.remove();
-            this.init();
-          })
-        })
+  getDescription(event) {
+    const ticket = event.target.closest('.ticket');
+    const id = ticket.id;
+    const ticketName = event.target.classList.contains('ticket-name');
+    const description = document.querySelector('.ticket-description')
+    
+    if (ticketName) {
+      this.ticketService.get(id, (response) => {
+        if (response.description) {
+          description.classList.toggle('show-description')
+        }
       })
     }
   }
+
 
   showForm() {
     this.formContainer.style.display = 'block';

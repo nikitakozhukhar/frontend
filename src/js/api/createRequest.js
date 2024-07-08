@@ -1,4 +1,4 @@
-const createRequest = async (options = {}) => {
+const createRequest = async (options) => {
 
 	try {
 		const requestOptions = {
@@ -16,7 +16,6 @@ const createRequest = async (options = {}) => {
 			}
 
 		}
-
 		const response = await fetch(options.url, requestOptions);
 		
 
@@ -24,10 +23,15 @@ const createRequest = async (options = {}) => {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 
-		const result = await response.json();
-
-
-		if (options.callback) {
+		// const 
+		
+		let result;
+		if (options.noResponse === true) {
+			result = {success: true};
+			options.callback();
+		}
+		if (options.callback && !options.noResponse) {
+			result = await response.json();
 			options.callback(result);
 		}
 
