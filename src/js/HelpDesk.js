@@ -13,16 +13,17 @@ export default class HelpDesk {
     this.container = container;
     this.ticketService = new TicketService();
     this.ticketView = new TicketView(this.container);
-    
+
     this.deleteTicket = this.deleteTicket.bind(this);
     this.getDescription = this.getDescription.bind(this);
+    this.updateTicket = this.updateTicket.bind(this);
 
     this.createAddButton();
     this.initForm();
   }
 
   init() {
-    
+
     console.log("Инициализация и рендеринг тикетов");
     this.ticketService.list(response => {
       this.ticketView.renderTickets(response);
@@ -33,6 +34,7 @@ export default class HelpDesk {
   addEventListeners() {
     this.container.addEventListener('click', this.deleteTicket);
     this.container.addEventListener('click', this.getDescription);
+    this.container.addEventListener('click', this.updateTicket);
   }
 
   createAddButton() {
@@ -71,8 +73,9 @@ export default class HelpDesk {
     })
   }
 
+ 
+
   deleteTicket(event) {
-   
     const ticket = event.target.closest('.ticket');
     const id = ticket.id;
     const deleteButton = event.target.closest('.ticket-delete');
@@ -83,21 +86,56 @@ export default class HelpDesk {
         this.init();
         location.reload()
       })
-    } 
+    }
   }
 
   getDescription(event) {
     const ticket = event.target.closest('.ticket');
     const id = ticket.id;
     const ticketName = event.target.classList.contains('ticket-name');
-    const description = document.querySelector('.ticket-description')
-    
+
     if (ticketName) {
       this.ticketService.get(id, (response) => {
         if (response.description) {
-          description.classList.toggle('show-description')
+          const description = ticket.querySelector('.ticket-description')
+          if (description) {
+            description.textContent = response.description;
+            description.classList.toggle('show-description')
+          }
         }
       })
+    }
+  }
+
+  updateTicket(event) {
+    const ticket = event.target.closest('.ticket');
+    const id = ticket.id;
+    const updateButton = event.target.closest('.ticket-update');
+    // debugger
+    if (updateButton) {
+      // Получение текущих данных тикета
+      this.ticketService.get(id, response => {
+        console.log(response);
+  
+        // Создание формы с текущими данными
+        const ticketForm = new TicketForm((updatedData) => {
+          // Обновление тикета на сервере
+          this.ticketService.update(id, updatedData, (updateResponse) => {
+            console.log(updatedData);
+  
+            // Обновление отображения тикета
+            ticket.querySelector('.ticket-name').textContent = updatedData.name;
+            ticket.querySelector('.ticket-description').textContent = updatedData.description;
+  
+            // Скрытие формы после обновления
+            this.hideForm();
+          });
+        });
+        
+        // Установка данных в форму и отображение формы
+        ticketForm.setFormData(response);
+        this.showForm();
+      });
     }
   }
 

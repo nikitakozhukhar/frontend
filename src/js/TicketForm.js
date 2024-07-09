@@ -40,8 +40,8 @@ export default class TicketForm {
    }
 
    setFormData(ticket) {
-    this.form.querySelector('[name]="ticket_name"').value = ticket.name;
-    this.form.querySelector('[name]="ticket_description"').value = ticket.description;
+    this.form.querySelector('.form__ticket_name').value = ticket.name;
+    this.form.querySelector('.form__ticket_description').value = ticket.description;
    }
 
    clearForm() {
