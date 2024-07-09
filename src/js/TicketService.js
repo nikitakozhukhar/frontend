@@ -8,7 +8,7 @@ export default class TicketService {
   list(callback) {
     createRequest({
       method: 'GET',
-      url: 'https://backend-xy21.onrender.com//?method=allTickets',
+      url: 'https://backend-xy21.onrender.com/?method=allTickets',
       headers: { 'Content-Type': 'application/json' },
       callback,
     })
@@ -43,7 +43,7 @@ export default class TicketService {
   delete(id, callback) {
     createRequest({
       method: 'GET',
-      url: `http://localhost:7070/?method=deleteById&id=${id}`,
+      url: `https://backend-xy21.onrender.com/?method=deleteById&id=${id}`,
       callback,
       noResponse: true,
     })
