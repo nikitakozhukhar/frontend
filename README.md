@@ -1,5 +1,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/hywucps6kpafmls1?svg=true)](https://ci.appveyor.com/project/nikitakozhukhar/frontend)
 
+https://nikitakozhukhar.github.io/frontend/ ссылка на GH Pages
+
 # Домашнее задание к занятию "7. Работа с HTTP"
 
 Правила сдачи задания:
