@@ -2,12 +2,12 @@
  *  Класс для создания формы создания нового тикета
  * */
 export default class TicketForm {
-  constructor(submitCallabck) {
-    this.submitCallabck = submitCallabck;
+  constructor() {
+    // this.submitCallabck = submitCallabck;
     this.form = this.createForm();
-   }
+  }
 
-   createForm() {
+  createForm() {
     const form = document.createElement('form');
     form.classList.add('form');
 
@@ -29,23 +29,35 @@ export default class TicketForm {
       e.preventDefault();
       const formData = new FormData(form);
       const data = Object.fromEntries(formData.entries());
-      this.submitCallabck(data)
+      this.onSubmit(data)
     })
 
     return form;
-   }
+  }
 
-   render(container) {
+  render(container) {
     container.appendChild(this.form)
-   }
+  }
 
-   setFormData(ticket) {
-    this.form.querySelector('.form__ticket_name').value = ticket.name;
-    this.form.querySelector('.form__ticket_description').value = ticket.description;
-   }
+  submitCallabck(callback) {
+    this.onSubmit = callback;
+  }
 
-   clearForm() {
+  setFormData(ticket) {
+    const nameInput = document.querySelector('.form__ticket_name');
+    const descriptionInput = document.querySelector('.form__ticket_description');
+
+    if (nameInput && descriptionInput) {
+      nameInput.value = ticket.name;
+      descriptionInput.value = ticket.description;
+    } else {
+      console.error('Inputs not found')
+    }
+
+  }
+
+  clearForm() {
     this.form.reset();
-   }
+  }
 }
-  
+

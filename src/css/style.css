@@ -6,28 +6,40 @@
 .add-ticket-button {
   padding: 20px 15px;
   margin-bottom: 20px;
-  border-radius: 8px;
+  border: 1px solid #9b989841;
+  border-radius: 25px;
   background-color: #dad8d841;
   font-size: 1em;
   cursor: pointer;
 }
 
+.ticket-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .ticket {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
+  min-width: 40vw;
+  max-width: 40vw;
   align-items: center;
   height: 50px;
   padding: 10px;
   margin-bottom: 10px;
   border: 1px solid #ccc;
+  border-radius: 25px;
 }
 
-.ticket-satatus {
+.ticket-status {
   width: 25px;
   height: 25px;
   border: 1px solid #ccc;
   border-radius: 50%;
   cursor: pointer;
+  text-align: center;
 }
 
 .ticket-name {
@@ -46,6 +58,8 @@
 
 .ticket-description {
   display: none;
+  margin-left: 69px;
+  margin-top: 5px;
 }
 
 .show-description {
@@ -80,5 +94,6 @@ textarea {
   font-size: 20px;
   cursor: pointer;
 }
+
 
  

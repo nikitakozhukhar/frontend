@@ -13,10 +13,12 @@ export default class HelpDesk {
     this.container = container;
     this.ticketService = new TicketService();
     this.ticketView = new TicketView(this.container);
+    this.ticketForm = new TicketForm();
 
     this.deleteTicket = this.deleteTicket.bind(this);
     this.getDescription = this.getDescription.bind(this);
     this.updateTicket = this.updateTicket.bind(this);
+    this.toggleStatus = this.toggleStatus.bind(this);
 
     this.createAddButton();
     this.initForm();
@@ -24,7 +26,6 @@ export default class HelpDesk {
 
   init() {
 
-    console.log("Инициализация и рендеринг тикетов");
     this.ticketService.list(response => {
       this.ticketView.renderTickets(response);
     })
@@ -35,6 +36,7 @@ export default class HelpDesk {
     this.container.addEventListener('click', this.deleteTicket);
     this.container.addEventListener('click', this.getDescription);
     this.container.addEventListener('click', this.updateTicket);
+    this.container.addEventListener('click', this.toggleStatus)
   }
 
   createAddButton() {
@@ -42,7 +44,13 @@ export default class HelpDesk {
     button.textContent = 'Добавить тикет';
     button.className = 'add-ticket-button';
 
-    button.addEventListener('click', () => this.showForm());
+    button.addEventListener('click', () => {
+      if (button) {
+        this.ticketForm.clearForm();
+        this.showForm()
+      }
+
+    });
 
     this.container.insertAdjacentElement('beforebegin', button);
 
@@ -50,7 +58,7 @@ export default class HelpDesk {
   }
 
   initForm() {
-    const ticketForm = new TicketForm((data) => {
+    this.ticketForm.submitCallabck((data) => {
       this.ticketService.create(data, (response) => {
 
         this.ticketView.renderTickets([response])
@@ -65,7 +73,7 @@ export default class HelpDesk {
 
     this.formContainer.style.display = 'none';
 
-    ticketForm.render(this.formContainer);
+    this.ticketForm.render(this.formContainer);
 
     const closeButton = document.querySelector('.form__buttonCancel');
     closeButton.addEventListener('click', () => {
@@ -73,7 +81,6 @@ export default class HelpDesk {
     })
   }
 
- 
 
   deleteTicket(event) {
     const ticket = event.target.closest('.ticket');
@@ -111,34 +118,50 @@ export default class HelpDesk {
     const ticket = event.target.closest('.ticket');
     const id = ticket.id;
     const updateButton = event.target.closest('.ticket-update');
-    // debugger
+
     if (updateButton) {
       // Получение текущих данных тикета
       this.ticketService.get(id, response => {
-        console.log(response);
-  
+
         // Создание формы с текущими данными
-        const ticketForm = new TicketForm((updatedData) => {
+        this.ticketForm.setFormData(response);
+
+
+        this.ticketForm.submitCallabck((updatedData) => {
+
           // Обновление тикета на сервере
           this.ticketService.update(id, updatedData, (updateResponse) => {
-            console.log(updatedData);
-  
+
             // Обновление отображения тикета
             ticket.querySelector('.ticket-name').textContent = updatedData.name;
             ticket.querySelector('.ticket-description').textContent = updatedData.description;
-  
+
             // Скрытие формы после обновления
             this.hideForm();
           });
         });
-        
+
         // Установка данных в форму и отображение формы
-        ticketForm.setFormData(response);
         this.showForm();
       });
     }
   }
 
+  toggleStatus(event) {
+    const status = event.target.closest('.ticket-status');
+    if (!status) return;
+
+    const ticket = status.closest('.ticket');
+    if (!ticket) return;
+
+    status.classList.toggle('completed');
+
+    if (status.classList.contains('completed')) {
+      status.innerHTML = '&#x2713';
+    } else {
+      status.innerHTML = ''
+    }
+  }
 
   showForm() {
     this.formContainer.style.display = 'block';
@@ -147,8 +170,4 @@ export default class HelpDesk {
   hideForm() {
     this.formContainer.style.display = 'none';
   }
-
-
-
-
 }
